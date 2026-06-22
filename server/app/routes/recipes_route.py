@@ -1,23 +1,12 @@
-# app/routes/recipes_route.py
 
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
-from pydantic import BaseModel
-from app.database import get_db
-from app.controllers.recipes_controller import get_recommended_recipes
+# app/routes/recipes_route.py
+from fastapi import APIRouter
+from typing import List  # בשביל הפרוטוקול, מייבאים List עם L גדולה מ-typingfrom app.controllers.recipes_controller import get_recommended_recipes
 
 router = APIRouter()
 
-# מבנה הבקשה שהריאקט ישלח אלינו
-class IngredientsRequest(BaseModel):
-    detected_ingredients: list[str]
-
 @router.post("/recommend")
-def recommend_recipes(request: IngredientsRequest, db: Session = Depends(get_db)):
-    # מעבירים לקונטרולר את החיבור לדאטהבייס ואת רשימת המצרכים מהבקשה
-    recipes = get_recommended_recipes(db, request.detected_ingredients)
-    
-    return {
-        "status": "success",
-        "recipes": recipes
-    }
+async def recommend_recipes(ingredients: List[str]):
+    # קריאה ל-Controller שיבצע את הפנייה למאגר ויחשב את הנתונים
+    result = get_recommended_recipes(ingredients)
+    return result

@@ -1,35 +1,46 @@
 # app/controllers/recipes_controller.py
+from app.database import fetch_recipes_from_api
 
-from sqlalchemy.orm import Session
-from app.models.recipe import Recipe
-
-def get_recommended_recipes(db: Session, detected_ingredients: list[str]):
-    # 1. שליפת כל המתכונים מהטבלה באמצעות ה-ORM
-    all_recipes = db.query(Recipe).all()
-    
-    recommended = []
-    
-    # הופכים את המצרכים שזוהו לאותיות קטנות כדי למנוע בעיות של רגישות לאותיות גדולות/קטנות
-    detected_set = set(item.lower() for item in detected_ingredients)
-    
-    for recipe in all_recipes:
-        # בגלל שהגדרתן JSON, פייתון כבר מתייחס לזה כאל רשימה
-        recipe_ingredients = [item.lower() for item in recipe.ingredients]
+def get_recommended_recipes(detected_ingredients: list):
+    """
+    המוח של המערכת: מקבל מצרכים מה-YOLO, פונה למאגר, 
+    ומחשב את ציון ההתאמה הסופי עבור ה-React
+    """
+    if not detected_ingredients:
+        return {"success": False, "message": "No ingredients detected", "recipes": []}
         
-        # חיתוך (Intersection) - בודק אילו מצרכים מהתמונה קיימים במתכון
-        matches = detected_set.intersection(set(recipe_ingredients))
+    # 1. שליפת המתכונים מהמאגר הענק בזמן אמת
+    raw_recipes = fetch_recipes_from_api(detected_ingredients)
+    
+    recommended_recipes = []
+    
+    # 2. ריצה על המתכונים שחזרו וחישוב ה-Match Score
+    for recipe in raw_recipes:
+        used_count = recipe.get("usedIngredientCount", 0)
+        missed_count = recipe.get("missedIngredientCount", 0)
+        total_ingredients = used_count + missed_count
         
-        if matches:  # אם יש לפחות מצרך אחד שמתאים
-            recommended.append({
-                "id": recipe.id,
-                "name": recipe.name,
-                "instructions": recipe.instructions,
-                "prep_time": recipe.prep_time,
-                "match_count": len(matches),      # כמות המצרכים שהתאימו
-                "matched_items": list(matches)    # אילו מצרכים בדיוק התאימו
-            })
+        # חישוב אחוז ההתאמה באופן אלגוריתמי
+        match_score = 0
+        if total_ingredients > 0:
+            match_score = int((used_count / total_ingredients) * 100)
             
-    # מיון מההתאמה הגבוהה ביותר (הכי הרבה מצרכים תואמים) לנמוכה ביותר
-    recommended.sort(key=lambda x: x["match_count"], reverse=True)
+        # בניית אובייקט המתכון הסופי שיוצג בכרטיסיות ב-React
+        recipe_data = {
+            "id": recipe.get("id"),
+            "title": recipe.get("title"),
+            "image": recipe.get("image"),
+            "match_score": match_score,
+            "used_ingredients": [ing.get("name") for ing in recipe.get("usedIngredients", [])],
+            "missed_ingredients": [ing.get("name") for ing in recipe.get("missedIngredients", [])]
+        }
+        recommended_recipes.append(recipe_data)
+        
+    # מיון המתכונים מההתאמה הגבוהה ביותר לנמוכה ביותר
+    recommended_recipes.sort(key=lambda x: x["match_score"], reverse=True)
     
-    return recommended
+    return {
+        "success": True,
+        "detected_count": len(detected_ingredients),
+        "recipes": recommended_recipes
+    }
