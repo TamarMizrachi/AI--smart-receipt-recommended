@@ -3,7 +3,10 @@ import requests
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
+<<<<<<< HEAD
 # ---- חלק 1: החיבור שלכן למסד הנתונים המקומי (MySQL) ----
+=======
+>>>>>>> partner-code
 SQL_DATABASE_URL = "mysql+pymysql://root:123456@localhost:3306/smart_recipe_db"
 
 engine = create_engine(SQL_DATABASE_URL)
@@ -20,7 +23,12 @@ def get_db():
 
 
 # ---- חלק 2: שליפת מתכונים ממאגר הנתונים העולמי (Spoonacular API) ----
+<<<<<<< HEAD
 SPOONACULAR_API_KEY = "4d9eb1cd446c4bbe83efa9f628f58190" 
+=======
+# הירשמו בחינם ל-Spoonacular ושימו כאן את ה-API Key שתקבלו
+SPOONACULAR_API_KEY = "c818a38a03b9461f90f6dadfde5f3479" 
+>>>>>>> partner-code
 SPOONACULAR_URL = "https://api.spoonacular.com/recipes/findByIngredients"
 
 def fetch_recipes_from_api(ingredients_list: list):

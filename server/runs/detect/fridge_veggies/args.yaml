@@ -1,7 +1,7 @@
 task: detect
 mode: train
 model: yolov8n.pt
-data: C:\Users\1\Desktop\AI Project\server\dataset\data.yaml
+data: C:\Users\user1\Desktop\AI project\server\dataset\data.yaml
 epochs: 15
 time: null
 patience: 100
@@ -107,4 +107,4 @@ auto_augment: randaugment
 erasing: 0.4
 cfg: null
 tracker: botsort.yaml
-save_dir: C:\Users\1\Desktop\AI Project\server\runs\detect\fridge_veggies
+save_dir: C:\Users\user1\Desktop\AI project\server\runs\detect\fridge_veggies

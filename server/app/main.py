@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> partner-code
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import detection_route, recipes_route
