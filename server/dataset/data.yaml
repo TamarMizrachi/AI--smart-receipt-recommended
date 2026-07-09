@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 16
+names: ['Beans', 'Bitter Gourd', 'Brinjal', 'Cabbage', 'Capsicum', 'Carrot', 'Chayote', 'Cucumber', 'Egg', 'Eggplant', 'Ginger', 'Green Chilly', 'Ladies Finger', 'Tomato', 'Turnip', 'object']
+
+roboflow:
+  workspace: fridge-ree21
+  project: fridge-vegetable-detection
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/fridge-ree21/fridge-vegetable-detection/dataset/1
