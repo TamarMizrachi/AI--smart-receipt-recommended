@@ -52,3 +52,31 @@ def fetch_recipes_from_api(ingredients_list: list):
     except Exception as e:
         print(f"API Connection Error: {e}")
         return []
+
+
+
+
+
+
+
+
+
+
+
+    #חדדדששששששששש
+    # נתיב ה-API לשליפת פרטי מתכון בודד
+SPOONACULAR_INFO_URL = "https://api.spoonacular.com/recipes/{id}/information"
+
+def fetch_recipe_details(recipe_id: int):
+    """שליפת פרטי מתכון מלאים לפי ID"""
+    url = SPOONACULAR_INFO_URL.format(id=recipe_id)
+    params = {"apiKey": SPOONACULAR_API_KEY}
+    
+    try:
+        response = requests.get(url, params=params)
+        if response.status_code == 200:
+            return response.json()
+        return None
+    except Exception as e:
+        print(f"Error fetching recipe details: {e}")
+        return None
